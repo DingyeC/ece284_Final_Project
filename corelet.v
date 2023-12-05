@@ -32,10 +32,7 @@ inst_q[1]   = execute_q;   inst_q[0]   = load_q;
    output [psum_bw*col-1 : 0] ofifo_out;
 
    /*AUTOREG*/   
-   // Beginning of automatic regs (for this module's undeclared outputs)
-   reg [psum_bw*col-1:0] sfu_out;
-   // End of automatics
-   reg [psum_bw*col-1:0] in_n;
+   wire [psum_bw*col-1:0] in_n;
 
    
    /*AUTOWIRE*/
@@ -47,6 +44,7 @@ inst_q[1]   = execute_q;   inst_q[0]   = load_q;
    wire			ofifo_ready;		// From ofifo_inst of ofifo.v
    wire [psum_bw*col-1:0] out_s;		// From mac_array_inst of mac_array.v
    wire [col-1:0]	valid;			// From mac_array_inst of mac_array.v
+	wire [1:0]  inst_w;
    // End of automatics
 
 
@@ -68,7 +66,7 @@ inst_q[1]   = execute_q;   inst_q[0]   = load_q;
 
    //mac_array
    assign inst_w = inst[1:0];
-   assign in_n = 128'b0;
+   assign in_n = 0;
    mac_array #(/*AUTOINSTPARAM*/
 	       // Parameters
 	       .bw			(bw),
@@ -85,7 +83,8 @@ inst_q[1]   = execute_q;   inst_q[0]   = load_q;
 							      .clk		(clk),
 							      .reset		(reset),
 							      .inst_w		(inst_w[1:0]),
-							      .in_n		(in_n[psum_bw*col-1:0]));
+							      .in_n		(in_n[psum_bw*col-1:0])
+									);
    
    //ofifo
    assign ofifo_rd = inst[6];
@@ -111,21 +110,23 @@ inst_q[1]   = execute_q;   inst_q[0]   = load_q;
    genvar		      i;
    assign acc = inst[33];
    assign thres = 16'b0;
+	generate
    for (i=1; i < col+1 ; i=i+1) begin : col_num
       sfu #(/*AUTOINSTPARAM*/
 	    // Parameters
 	    .bw				(bw),
 	    .psum_bw			(psum_bw)) sfu_instance(
 					    // Outputs
-					    .sfu_out(sfp_out[i*psum_bw-1 : (i-1)*psum_bw]);
+					    .sfu_out(sfu_out[i*psum_bw-1 : (i-1)*psum_bw]),
 					    // Inputs
 					    .clk(clk),
 					    .reset(reset),
 					    .relu(relu),
 					    .acc(acc),
-					    .sfu_in(sfp_in[i*psum_bw-1 : (i-1)*psum_bw]), 
+					    .sfu_in(sfu_in[i*psum_bw-1 : (i-1)*psum_bw]), 
 					    .thres(thres)
 					    );
    end
+	endgenerate
    
 endmodule // corelet

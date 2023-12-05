@@ -23,14 +23,14 @@ output  signed [psum_bw-1:0] sfu_out;
 reg  signed [psum_bw-1:0] psum_q;
 
 // Your code goes here
-assign out = psum_q;
+assign sfu_out = psum_q;
 
 always @(posedge clk) begin
 	if(reset) psum_q <= 0;
 
 	else begin
 
-		if(acc) psum_q <= psum_q + in;
+		if(acc) psum_q <= psum_q + sfu_in;
 
 		else if(relu) psum_q <= ( psum_q > thres ) ? psum_q : 0;
 

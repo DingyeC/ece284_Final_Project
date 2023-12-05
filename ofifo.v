@@ -30,6 +30,7 @@ module ofifo (/*AUTOARG*/
   assign ofifo_full  = |full ;
   assign ofifo_valid = &(~empty) ;
 
+  generate
   for (i=0; i<col ; i=i+1) begin : col_num
       fifo_depth64 #(.bw(bw)) fifo_instance (
 	 .rd_clk(clk),
@@ -42,7 +43,7 @@ module ofifo (/*AUTOARG*/
 	 .out(ofifo_out[(i+1)*bw-1:i*bw]),
          .reset(reset));
   end
-
+  endgenerate
 
   always @ (posedge clk) begin
    if (reset) begin

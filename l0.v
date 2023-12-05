@@ -29,7 +29,7 @@ module l0 (/*AUTOARG*/
    assign l0_ready = ~l0_full ;
    assign l0_full  = |(full) ;
 
-
+   generate
    for (i=0; i<row ; i=i+1) begin : row_num
       fifo_depth64 #(.bw(bw)) fifo_instance (
 					     .rd_clk(clk),
@@ -42,6 +42,7 @@ module l0 (/*AUTOARG*/
 					     .out(l0_out[(i+1)*bw-1:i*bw]),
 					     .reset(reset));
    end
+	endgenerate
 
    always @ (posedge clk) begin
       if (reset) begin

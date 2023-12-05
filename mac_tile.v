@@ -12,7 +12,7 @@ input  [1:0] inst_w;
 output [1:0] inst_e;
 input  [psum_bw-1:0] in_n;
 input  clk;
-input  reset
+input  reset;
 
 reg [1:0] inst_q;
 reg [bw-1:0] a_q;
@@ -41,7 +41,7 @@ always @ (posedge clk) begin
 			b_q <= in_w[bw-1:0];
 			load_ready_q <= 0;
 		end
-		else if(load_read_q == 0)
+		else if(load_ready_q == 0)
 			inst_q[0] <= inst_w[0];
 	end
 end
