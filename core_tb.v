@@ -86,8 +86,8 @@ core  #(.bw(bw), .col(col), .row(row)) core_instance (
 	.clk(clk), 
 	.inst(inst_q),
 	.ofifo_valid(ofifo_valid),
-        .D_xmem(D_xmem_q), 
-        .sfp_out(sfp_out), 
+  .D(D_xmem_q), 
+  .sfp_out(sfp_out), 
 	.reset(reset)); 
 
 
@@ -199,13 +199,23 @@ initial begin
 
 
     /////// Kernel data writing to L0 ///////
-    ...
+    for (i=0; i<col-1; i=i+1) begin
+      #0.5 clk = 1'b0; l0_rd = 0; l0_wr = 1; WEN_xmem = 1; CEN_xmem = 0; A_xmem = A_xmem + 1;
+      #0.5 clk = 1'b1;
+    end
+    #0.5 clk = 1'b0; CEN_xmem = 1; A_xmem = 0; l0_wr = 1;
+    #0.5 clk = 1'b1;
+    #0.5 clk = 1'b0; l0_wr = 0;
+    #0.5 clk = 1'b1;
     /////////////////////////////////////
 
 
 
     /////// Kernel loading to PEs ///////
-    ...
+    for (j=0; j<col; j=j+1) begin
+      #0.5 clk = 1'b0; l0_rd = 1; load = 1;
+      #0.5 clk = 1'b1;
+    end
     /////////////////////////////////////
   
 
@@ -224,13 +234,32 @@ initial begin
 
 
     /////// Activation data writing to L0 ///////
-    ...
+    #0.5 clk = 1'b0; WEN_xmem = 1; CEN_xmem = 0;
+    #0.5 clk = 1'b1;
+    for (k=0; k<len_nij-1; k=k+1) begin
+      #0.5 clk = 1'b0; l0_wr = 1; WEN_xmem = 1; CEN_xmem = 0; A_xmem = A_xmem + 1;
+      #0.5 clk = 1'b1;
+    end
+    #0.5 clk = 1'b0; CEN_xmem = 1; A_xmem = 0; l0_wr = 1;
+    #0.5 clk = 1'b1;
+    #0.5 clk = 1'b0; l0_wr = 0;
+    #0.5 clk = 1'b1;
     /////////////////////////////////////
 
 
 
     /////// Execution ///////
-    ...
+    for (i=0; i<len_nij; i=i+1) begin
+      #0.5 clk = 1'b0; l0_rd = 1; execute = 1;
+      #0.5 clk = 1'b1;
+    end
+    #0.5 clk = 1'b0; l0_rd = 0; execute = 0;
+    #0.5 clk = 1'b1;
+
+    for (i=0; i<len_nij; i=i+1) begin
+      #0.5 clk = 1'b0;
+      #0.5 clk = 1'b1;
+    end 
     /////////////////////////////////////
 
 
@@ -238,7 +267,16 @@ initial begin
     //////// OFIFO READ ////////
     // Ideally, OFIFO should be read while execution, but we have enough ofifo
     // depth so we can fetch out after execution.
-    ...
+    #0.5 clk = 1'b0; ofifo_rd = 1;
+    #0.5 clk = 1'b1;
+    for (i=0; i<len_nij-1; i=i+1) begin
+      #0.5 clk = 1'b0; ofifo_rd = 1; WEN_pmem = 0; CEN_pmem = 0; if(i>0) A_pmem = A_pmem + 1;
+      #0.5 clk = 1'b1;
+    end
+    #0.5 clk = 1'b0; ofifo_rd = 0; WEN_pmem = 0; CEN_pmem = 0; A_pmem = A_pmem + 1;
+    #0.5 clk = 1'b1; 
+    #0.5 clk = 1'b0; WEN_pmem = 1; CEN_pmem = 1; A_pmem = A_pmem + 1;
+    #0.5 clk = 1'b1;
     /////////////////////////////////////
 
 
