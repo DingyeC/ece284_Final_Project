@@ -11,7 +11,7 @@ parameter row = 8;
 parameter psum_bw = 16;
 
 input clk, reset;
-input [34:0] inst;
+input [33:0] inst;
 
 input [bw*row-1:0] D;
 
@@ -19,6 +19,13 @@ output [col*psum_bw-1:0] sfu_out;
 output ofifo_valid;
 
 /*AUTOREG*/
+
+wire [10:0] xmem_A;
+wire WEN_xmem;
+wire CEN_xmem;
+wire [10:0] pmem_A;
+wire WEN_pmem;
+wire CEN_pmem;
 
 /*AUTOWIRE*/
 // Beginning of automatic wires (for undeclared instantiated-module outputs)

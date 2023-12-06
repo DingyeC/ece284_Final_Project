@@ -66,7 +66,7 @@ inst_q[1]   = execute_q;   inst_q[0]   = load_q;
 
    //mac_array
    assign inst_w = inst[1:0];
-   assign in_n = 0;
+   assign in_n = 128'b0;
    mac_array #(/*AUTOINSTPARAM*/
 	       // Parameters
 	       .bw			(bw),
@@ -91,13 +91,13 @@ inst_q[1]   = execute_q;   inst_q[0]   = load_q;
    ofifo #(/*AUTOINSTPARAM*/
 	   // Parameters
 	   .col				(col),
-	   .bw				(bw)) ofifo_inst(
+	   .bw			  	(psum_bw)) ofifo_inst(
                         // Inputs
                         .ofifo_in		(out_s[psum_bw*col-1:0]), // from mac_array
                         .ofifo_wr		(valid[col-1:0]),         // from mac_array
                         /*AUTOINST*/
 							 // Outputs
-							 .ofifo_out		(ofifo_out[col*bw-1:0]),
+							 .ofifo_out		(ofifo_out[col*psum_bw-1:0]),
 							 .ofifo_full		(ofifo_full),
 							 .ofifo_ready		(ofifo_ready),
 							 .ofifo_valid		(ofifo_valid),

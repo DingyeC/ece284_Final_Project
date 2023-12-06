@@ -32,6 +32,7 @@ module mac_row (clk, out_s, in_w, in_n, valid, inst_w, reset);
 	 .in_n(in_n[psum_bw*i-1:psum_bw*(i-1)]),
 	 .out_s(out_s[psum_bw*i-1:psum_bw*(i-1)])
 	 );
+      assign valid[i-1] = temp_inst[2*(i+1)-1];
   end
   endgenerate
 
