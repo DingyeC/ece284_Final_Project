@@ -27,23 +27,34 @@ mac #(.bw(bw), .psum_bw(psum_bw)) mac_instance (
         .a(a_q), 
         .b(b_q),
         .c(c_q),
-	.out(mac_out)
+	.out(out_s)
 ); 
 
-always @ (posedge clk) begin
-	if(reset) begin
-		load_ready_q <= 1;
-		inst_q       <= 0;
-	end
-	else begin
-		inst_q[1] <= inst_w[1];
-		if(inst_w[0] && load_ready_q) begin
-			b_q <= in_w[bw-1:0];
-			load_ready_q <= 0;
-		end
-		else if(load_ready_q == 0)
-			inst_q[0] <= inst_w[0];
-	end
+always @(posedge clk or posedge reset) begin
+        if(reset == 1) begin
+                load_ready_q <= 1;
+                inst_q <= 2'b00;
+                a_q    <= 0;
+                b_q    <= 0;
+                c_q    <= 0;
+        end
+
+        else begin
+                inst_q[1] <= inst_w[1];
+                c_q <= in_n;
+                if(inst_w[0] || inst_w[1]) begin
+                        a_q <= in_w;
+                end
+
+                if(inst_w[0] && load_ready_q) begin
+                        b_q <= in_w;
+                        load_ready_q <= 0;         
+                end
+
+                if(load_ready_q == 0) begin
+                        inst_q[0] <= inst_w[0];
+                end       
+        end
 end
 
 endmodule
