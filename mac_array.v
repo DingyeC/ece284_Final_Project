@@ -17,6 +17,9 @@ module mac_array (clk, reset, out_s, in_w, in_n, inst_w, valid);
 	wire [psum_bw*col*(row+1)-1:0] n_s_array;
 	wire [row*col-1:0] valid_array;
 	
+   assign n_s_array[psum_bw*col*1-1:psum_bw*col*0] = 0;
+   assign out_s = n_s_array[psum_bw*col*9-1:psum_bw*col*8];
+   assign valid = valid_array[row*col-1:row*col-8];
 
 	genvar i;
 	generate
