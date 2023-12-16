@@ -12,12 +12,12 @@ module sram_32b_w2048 (CLK, D, Q, CEN, WEN, A);
 
   reg [31:0] memory [num-1:0];
   reg [10:0] add_q;
-  assign Q = memory[add_q];
+  assign Q = (!CEN && WEN) ? memory[A] :0;
 
   always @ (posedge CLK) begin
 
-   if (!CEN && WEN) // read 
-      add_q <= A;
+   //if (!CEN && WEN) // read 
+      //add_q <= A;
    if (!CEN && !WEN) // write
       memory[A] <= D; 
 

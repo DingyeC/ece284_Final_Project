@@ -192,20 +192,20 @@ initial begin
       #0.5 clk = 1'b1;  
     end
 
-    #0.5 clk = 1'b0;  WEN_xmem = 1;  CEN_xmem = 1; A_xmem = 0;
+    #0.5 clk = 1'b0;  WEN_xmem = 1;  CEN_xmem = 1;     
     #0.5 clk = 1'b1; 
     /////////////////////////////////////
 
 
 
     /////// Kernel data writing to L0 ///////
-    for (i=0; i<col-1; i=i+1) begin
-      #0.5 clk = 1'b0; l0_rd = 0; l0_wr = 1; WEN_xmem = 1; CEN_xmem = 0; A_xmem = A_xmem + 1;
+    A_xmem = 11'b10000000000;
+
+    for (i=0; i<col; i=i+1) begin
+      #0.5 clk = 1'b0; l0_rd = 0; l0_wr = 1; WEN_xmem = 1; CEN_xmem = 0; if (i>0) A_xmem = A_xmem + 1;
       #0.5 clk = 1'b1;
     end
-    #0.5 clk = 1'b0; CEN_xmem = 1; A_xmem = 0; l0_wr = 1;
-    #0.5 clk = 1'b1;
-    #0.5 clk = 1'b0; l0_wr = 0;
+    #0.5 clk = 1'b0; CEN_xmem = 1; A_xmem = 0; l0_wr = 0;
     #0.5 clk = 1'b1;
     /////////////////////////////////////
 
@@ -234,10 +234,12 @@ initial begin
 
 
     /////// Activation data writing to L0 ///////
+    A_xmem = 11'b00000000000;
+
     #0.5 clk = 1'b0; WEN_xmem = 1; CEN_xmem = 0;
     #0.5 clk = 1'b1;
-    for (k=0; k<len_nij-1; k=k+1) begin
-      #0.5 clk = 1'b0; l0_wr = 1; WEN_xmem = 1; CEN_xmem = 0; A_xmem = A_xmem + 1;
+    for (k=0; k<len_nij; k=k+1) begin
+      #0.5 clk = 1'b0; l0_wr = 1; WEN_xmem = 1; CEN_xmem = 0; if (k>0) A_xmem = A_xmem + 1;
       #0.5 clk = 1'b1;
     end
     #0.5 clk = 1'b0; CEN_xmem = 1; A_xmem = 0; l0_wr = 1;

@@ -12,13 +12,14 @@ module sram_128b_w2048 (CLK, D, Q, CEN, WEN, REN, A);
   parameter num = 2048;
 
   reg [127:0] memory [num-1:0];
-  //reg [10:0] add_q;
-  assign Q = (!CEN && !REN) ? memory[A] : 0;
+  reg [10:0] add_q;
+  assign Q = memory[add_q];
 
   always @ (posedge CLK) begin
-    if (!CEN && !WEN) // write
+    if (!CEN && WEN) // read 
+      add_q <= A;
+   if (!CEN && !WEN) // write
       memory[A] <= D; 
-
   end
 
 endmodule
