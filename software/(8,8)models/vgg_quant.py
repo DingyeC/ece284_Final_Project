@@ -39,11 +39,11 @@ class VGG_quant(nn.Module):
                            nn.ReLU(inplace=True)]
                 in_channels = 64
             elif x == 'W':
-                layers += [QuantConv2d(16, 8, kernel_size=3, padding=1),
+                layers += [QuantConv2d(8, 8, kernel_size=3, padding=1),
                            nn.ReLU(inplace=True)]
             elif x == 'K':
-                layers += [QuantConv2d(256, 16, kernel_size=3, padding=1),
-                           nn.BatchNorm2d(16),
+                layers += [QuantConv2d(256, 8, kernel_size=3, padding=1),
+                           nn.BatchNorm2d(8),
                            nn.ReLU(inplace=True)]
             elif x == 'L':
                 layers += [QuantConv2d(8, 512, kernel_size=3, padding=1),
